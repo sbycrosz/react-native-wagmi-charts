@@ -80,7 +80,8 @@ export const CandlestickChartCandle = ({
     props.useAnimations ? <AnimatedRect {...props} /> : <Rect {...props} />,
 }: CandlestickChartCandleProps) => {
   const { close, open, high, low } = candle;
-  const isPositive = close > open;
+  // Treat unchanging data point (open === close) as positive
+  const isPositive = close >= open;
   const fill = isPositive ? positiveColor : negativeColor;
   const x = index * width;
   const max = Math.max(open, close);
@@ -142,7 +143,8 @@ export const CandlestickChartCandle = ({
   const animatedRectProps = useAnimatedProps(() => ({
     x: withTiming(x + margin),
     y: withTiming(getY({ maxHeight, value: max, domain })),
-    height: withTiming(getHeight({ maxHeight, value: max - min, domain })),
+    // Display a 2px line for unchanging data point (open === close)
+    height: withTiming(getHeight({ maxHeight, value: max - min, domain }) + 2),
   }));
 
   return (
